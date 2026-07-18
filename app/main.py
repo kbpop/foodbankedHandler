@@ -40,6 +40,8 @@ def home():
 def get_db():
     if 'mysql_db' not in g:
         g.mysql_db = connect_to_db()
+    if g.mysql_db is None and request.path != "/":
+        return jsonify({"error": "database connection unavailable"}), 503
 
 
 @app.teardown_request

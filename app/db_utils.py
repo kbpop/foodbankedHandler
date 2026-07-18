@@ -10,7 +10,7 @@ def connect_to_db():
     try:
         # Establish the connection
         connection = mysql.connector.connect(
-            host="172.17.0.2",
+            host=os.getenv("MYSQL_HOST", "127.0.0.1"),
             database=os.getenv("MYSQL_DATABASE"),
             user=os.getenv("MYSQL_USER"),
             password=os.getenv("MYSQL_PASSWORD")
