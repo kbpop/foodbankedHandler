@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request, g
 from flask_cors import CORS
 from mysql.connector.errors import IntegrityError
-
+from sql_queries import fetch_user_inventory_all, fetch_user_query, fetch_user_inventory_latest
 from db_utils import (
     connect_to_db,
     get_user_by_email,
@@ -49,6 +49,7 @@ def teardown_db(exception):
     db = g.pop('mysql_db', None)
     if db is not None:
         db.close()
+
 
 
 @app.route("/user/<int:user_id>")
@@ -158,6 +159,24 @@ def admin_verify(user_id):
     approve = data.get("approve", True)
     set_verification_status(g.mysql_db, user_id, "verified" if approve else "rejected")
     return jsonify({"ok": True})
+
+
+@app.route("/inventory/latest/<user_id>")
+def invetory_latest(user_id):
+    cursor = g.mysql_db.cursor(dictionary=True)
+    cursor.execute(fetch_user_inventory_latest(user_id))
+    users = cursor.fetchall()
+    cursor.close()
+    return jsonify(users)
+
+
+@app.route("/inventory/full/<user_id>")
+def invetory_full(user_id):
+    cursor = g.mysql_db.cursor(dictionary=True)
+    cursor.execute(fetch_user_inventory_all(user_id))
+    users = cursor.fetchall()
+    cursor.close()
+    return jsonify(users)
 
 
 if __name__ == "__main__":
