@@ -161,19 +161,21 @@ def admin_verify(user_id):
     return jsonify({"ok": True})
 
 
-@app.route("/inventory/latest/<user_id>")
+@app.route("/inventory/latest/<int:user_id>")
+@login_required
 def invetory_latest(user_id):
     cursor = g.mysql_db.cursor(dictionary=True)
-    cursor.execute(fetch_user_inventory_latest(user_id))
+    cursor.execute(fetch_user_inventory_latest(), (user_id,))
     users = cursor.fetchall()
     cursor.close()
     return jsonify(users)
 
 
-@app.route("/inventory/full/<user_id>")
+@app.route("/inventory/full/<int:user_id>")
+@login_required
 def invetory_full(user_id):
     cursor = g.mysql_db.cursor(dictionary=True)
-    cursor.execute(fetch_user_inventory_all(user_id))
+    cursor.execute(fetch_user_inventory_all(), (user_id,))
     users = cursor.fetchall()
     cursor.close()
     return jsonify(users)
