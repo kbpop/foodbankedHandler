@@ -28,7 +28,8 @@ def verify_password(password, password_hash):
 
 def create_token(user):
     payload = {
-        "sub": user["id"],
+        # JWT spec requires sub to be a string; PyJWT 2.10+ rejects ints on decode
+        "sub": str(user["id"]),
         "email": user["email"],
         "account_type": user["account_type"],
         "exp": datetime.now(timezone.utc) + timedelta(hours=JWT_EXP_HOURS),
